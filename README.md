@@ -1,4 +1,4 @@
-## Movenet
+# Movenet Pytorch
 
 This repository contains a PyTorch implementation of [Movenet](https://blog.tensorflow.org/2021/05/next-generation-pose-detection-with-movenet-and-tensorflowjs.html) from Google. The inference correctness is the point this repo focuses on. If you are interested in Movenet training, you can refer to my another repo [lee-man/movenet](https://github.com/lee-man/movenet).
 
@@ -11,11 +11,21 @@ I will only released the model definition and pose decoding part of Movenet. No 
 Portions of the code in this repo are borrowed from the following repos:
 1. [Centernet](https://github.com/xingyizhou/CenterNet) for prediction heads.
 2. [Pytorch Vision](https://github.com/pytorch/vision) for MobileNet and Feature Pyramid Network.
-3. [https://github.com/rwightman/posenet-pytorch] for the other utility functions.
+3. [posenet-pytorch](https://github.com/rwightman/posenet-pytorch) for the other utility functions.
 
 This port is based on my Tensorflow Python (https://github.com/rwightman/posenet-python) conversion of the same model. An additional step of the algorithm was performed on the GPU in this implementation so it is faster and consumes less CPU (but more GPU). On a GTX 1080 Ti (or better) it can run over 130fps.
 
 Further optimization is possible as the MobileNet base models have a throughput of 200-300 fps.
+
+### Notice
+In order to get in touch with the internal computational flow of Movenet, I use [netron](https://github.com/lutzroeder/netron) to visualize Movenet and my own implementation. You can use netron to check them together. The model definitions in onnx format or tflite format are maintained in `_models` directory. There are a few things to pay attention to when I try to convert the movenet TFLite model to PyTorch model:
+
+* Extract the weights:
+  * Currently I use the most clumsy way to extract the weights from TFLite model: open it with netron, select the layers/ops I want to deal with, export the weights, and rename the numpy file using PyTorch convention.
+* Batchnorm:
+  * As the TFLite fuses the convolutional layers and batchnorm layers together, the BatchNorm layers are removed from PyTorch MobileNet v2 implementation.
+* Padding:
+  * The ways how Tensorflow and PyTorch do the padding are slightly different. In Tensorflow and original Movenet, the padding mode is specified as `same`, and it will do the asymmetry padding with the setting: `stride=2, kernel_size=3`. But in PyTorch, the padding will be symmetry. So I add `nn.ZeroPad2d` layers before Conv2d layer with `stride=2, kernel_size=3`.
 
 ### Install
 
