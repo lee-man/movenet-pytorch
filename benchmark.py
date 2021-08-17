@@ -3,11 +3,12 @@ import time
 import argparse
 import os
 
-import posenet
-
+from movenet.models.model_factory import load_model
+from movenet.utils import read_imgfile, draw_skel_and_kp
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--model', type=int, default=101)
+parser.add_argument('--model', type=str, default="movenet")
+parser.add_argument('--size', type=int, default=192)
 parser.add_argument('--image_dir', type=str, default='./images')
 parser.add_argument('--num_images', type=int, default=1000)
 args = parser.parse_args()
@@ -15,35 +16,27 @@ args = parser.parse_args()
 
 def main():
 
-    with torch.no_grad():
-        model = posenet.load_model(args.model)
-        model = model.cuda()
-        output_stride = model.output_stride
-        num_images = args.num_images
+    model = load_model(args.model)
+    # model = model.cuda()
 
-        filenames = [
-            f.path for f in os.scandir(args.image_dir) if f.is_file() and f.path.endswith(('.png', '.jpg'))]
-        if len(filenames) > num_images:
-            filenames = filenames[:num_images]
+    filenames = [
+        f.path for f in os.scandir(args.image_dir) if f.is_file() and f.path.endswith(('.png', '.jpg', 'jpeg'))]
+    if len(filenames) > args.num_images:
+        filenames = filenames[:args.num_images]
 
-        images = {f: posenet.read_imgfile(f, 1.0, output_stride)[0] for f in filenames}
+    images = {f: read_imgfile(f, args.size)[0] for f in filenames}
 
-        start = time.time()
-        for i in range(num_images):
-            input_image = torch.Tensor(images[filenames[i % len(filenames)]]).cuda()
+    start = time.time()
+    for i in range(args.num_images):
 
-            results = model(input_image)
-            heatmaps, offsets, displacement_fwd, displacement_bwd = results
-            output = posenet.decode_multiple_poses(
-                heatmaps.squeeze(0),
-                offsets.squeeze(0),
-                displacement_fwd.squeeze(0),
-                displacement_bwd.squeeze(0),
-                output_stride=output_stride,
-                max_pose_detections=10,
-                min_pose_score=0.25)
+        with torch.no_grad():
+            input_image = torch.Tensor(images[filenames[i % len(filenames)]]) # .cuda()
 
-        print('Average FPS:', num_images / (time.time() - start))
+            kpt_with_conf = model.decode(input_image)
+            kpt_with_conf = kpt_with_conf.numpy()
+
+
+    print('Average FPS:', args.num_images / (time.time() - start))
 
 
 if __name__ == "__main__":

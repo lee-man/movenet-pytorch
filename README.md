@@ -18,6 +18,8 @@ Portions of the code in this repo are borrowed from the following repos:
 ### Notice
 In order to get in touch with the internal computational flow of Movenet, I use [netron](https://github.com/lutzroeder/netron) to visualize Movenet and my own implementation. You can use netron to compare the one with another. The model definitions in onnx format or tflite format are maintained in `_models` directory. There are a few things to pay attention to when I try to convert the movenet TFLite model to PyTorch model:
 
+* Movenet version:
+  * There are two versions of Movenet: Lightning and Thunder. The current code only supports Lightning ones.
 * Extract the weights:
   * Currently I use the most clumsy way to extract the weights from TFLite model: open it with netron, select the layers/ops I want to deal with, export the weights, and rename the numpy file using PyTorch convention.
 * Batchnorm:
@@ -64,19 +66,4 @@ A minimal performance benchmark based on image_demo. Images in `--image_dir` are
 
 The webcam demo uses OpenCV to capture images from a connected webcam. The result is overlayed with the keypoints and skeletons and rendered to the screen. The default args for the webcam_demo assume device_id=0 for the camera and that 1280x720 resolution is possible.
 
-### Credits
-
-The original model, weights, code, etc. was created by Google and can be found at https://github.com/tensorflow/tfjs-models/tree/master/posenet
-
-This port and my work is in no way related to Google.
-
-The Python conversion code that started me on my way was adapted from the CoreML port at https://github.com/infocom-tpo/PoseNet-CoreML
-
-### TODO (someday, maybe)
-* More stringent verification of correctness against the original implementation
-* Performance improvements (especially edge loops in 'decode.py')
-* OpenGL rendering/drawing
-* Comment interfaces, tensor dimensions, etc
-* Implement batch inference for image_demo
-* Create a training routine and add models with more advanced CNN backbones
 
