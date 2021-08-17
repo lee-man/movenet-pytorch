@@ -1,63 +1,42 @@
+# Dictionary that maps from joint names to keypoint indices.
+KEYPOINT_DICT = {
+    'nose': 0,
+    'left_eye': 1,
+    'right_eye': 2,
+    'left_ear': 3,
+    'right_ear': 4,
+    'left_shoulder': 5,
+    'right_shoulder': 6,
+    'left_elbow': 7,
+    'right_elbow': 8,
+    'left_wrist': 9,
+    'right_wrist': 10,
+    'left_hip': 11,
+    'right_hip': 12,
+    'left_knee': 13,
+    'right_knee': 14,
+    'left_ankle': 15,
+    'right_ankle': 16
+}
 
-PART_NAMES = [
-    "nose", "leftEye", "rightEye", "leftEar", "rightEar", "leftShoulder",
-    "rightShoulder", "leftElbow", "rightElbow", "leftWrist", "rightWrist",
-    "leftHip", "rightHip", "leftKnee", "rightKnee", "leftAnkle", "rightAnkle"
-]
-
-NUM_KEYPOINTS = len(PART_NAMES)
-
-PART_IDS = {pn: pid for pid, pn in enumerate(PART_NAMES)}
-
-CONNECTED_PART_NAMES = [
-    ("leftHip", "leftShoulder"), ("leftElbow", "leftShoulder"),
-    ("leftElbow", "leftWrist"), ("leftHip", "leftKnee"),
-    ("leftKnee", "leftAnkle"), ("rightHip", "rightShoulder"),
-    ("rightElbow", "rightShoulder"), ("rightElbow", "rightWrist"),
-    ("rightHip", "rightKnee"), ("rightKnee", "rightAnkle"),
-    ("leftShoulder", "rightShoulder"), ("leftHip", "rightHip")
-]
-
-CONNECTED_PART_INDICES = [(PART_IDS[a], PART_IDS[b]) for a, b in CONNECTED_PART_NAMES]
-
-LOCAL_MAXIMUM_RADIUS = 1
-
-POSE_CHAIN = [
-    ("nose", "leftEye"), ("leftEye", "leftEar"), ("nose", "rightEye"),
-    ("rightEye", "rightEar"), ("nose", "leftShoulder"),
-    ("leftShoulder", "leftElbow"), ("leftElbow", "leftWrist"),
-    ("leftShoulder", "leftHip"), ("leftHip", "leftKnee"),
-    ("leftKnee", "leftAnkle"), ("nose", "rightShoulder"),
-    ("rightShoulder", "rightElbow"), ("rightElbow", "rightWrist"),
-    ("rightShoulder", "rightHip"), ("rightHip", "rightKnee"),
-    ("rightKnee", "rightAnkle")
-]
-
-PARENT_CHILD_TUPLES = [(PART_IDS[parent], PART_IDS[child]) for parent, child in POSE_CHAIN]
-
-PART_CHANNELS = [
-  'left_face',
-  'right_face',
-  'right_upper_leg_front',
-  'right_lower_leg_back',
-  'right_upper_leg_back',
-  'left_lower_leg_front',
-  'left_upper_leg_front',
-  'left_upper_leg_back',
-  'left_lower_leg_back',
-  'right_feet',
-  'right_lower_leg_front',
-  'left_feet',
-  'torso_front',
-  'torso_back',
-  'right_upper_arm_front',
-  'right_upper_arm_back',
-  'right_lower_arm_back',
-  'left_lower_arm_front',
-  'left_upper_arm_front',
-  'left_upper_arm_back',
-  'left_lower_arm_back',
-  'right_hand',
-  'right_lower_arm_front',
-  'left_hand'
-]
+# Maps bones to a matplotlib color name.
+KEYPOINT_EDGE_INDS_TO_COLOR = {
+    (0, 1): 'm',
+    (0, 2): 'c',
+    (1, 3): 'm',
+    (2, 4): 'c',
+    (0, 5): 'm',
+    (0, 6): 'c',
+    (5, 7): 'm',
+    (7, 9): 'm',
+    (6, 8): 'c',
+    (8, 10): 'c',
+    (5, 6): 'y',
+    (5, 11): 'm',
+    (6, 12): 'c',
+    (11, 12): 'y',
+    (11, 13): 'm',
+    (13, 15): 'm',
+    (12, 14): 'c',
+    (14, 16): 'c'
+}

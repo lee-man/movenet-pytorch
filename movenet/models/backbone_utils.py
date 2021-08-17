@@ -1,7 +1,7 @@
 import warnings
 import torch
 from torch import nn
-from .feature_pyramid_network import FeaturePyramidNetwork, LastLevelMaxPool
+from .feature_pyramid_network import FeaturePyramidNetwork
 
 
 from torchvision.ops import misc as misc_nn_ops
@@ -29,18 +29,15 @@ class BackboneWithFPN(nn.Module):
     Attributes:
         out_channels (int): the number of channels in the FPN
     """
-    def __init__(self, backbone, return_layers, in_channels_list, out_channels, extra_blocks=None):
+    def __init__(self, backbone, return_layers, in_channels_list, out_channels):
         super(BackboneWithFPN, self).__init__()
 
-        if extra_blocks is None:
-            extra_blocks = LastLevelMaxPool()
 
         self.body = IntermediateLayerGetter(backbone, return_layers=return_layers)
         self.fpn = FeaturePyramidNetwork(
             in_channels_list=in_channels_list,
             out_channels_list=[24, 32, 64, 64],
             fused_channels_list=[24, 24, 32],
-            extra_blocks=extra_blocks,
         )
         self.out_channels = out_channels
 
@@ -97,7 +94,7 @@ def mobilenet_backbone(
         in_channels_list = [backbone[stage_indices[i]].out_channels for i in returned_layers]
         # print("in_channels_list", in_channels_list)
 
-        return BackboneWithFPN(backbone, return_layers, in_channels_list, out_channels, extra_blocks=extra_blocks)
+        return BackboneWithFPN(backbone, return_layers, in_channels_list, out_channels)
     else:
         m = nn.Sequential(
             backbone,

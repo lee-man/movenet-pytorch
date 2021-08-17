@@ -6,7 +6,7 @@ This repository contains a PyTorch implementation of [Movenet](https://blog.tens
 
 The original model, weights, etc. was created by Google and can be found at [tf hub](https://tfhub.dev/google/lite-model/movenet/singlepose/lightning/3).
 
-I will only released the model definition and pose decoding part of Movenet. No weights will be provided.
+I only release the model definition and pose decoding part of Movenet. No weights will be provided.
 
 Portions of the code in this repo are borrowed from the following repos:
 1. [Centernet](https://github.com/xingyizhou/CenterNet) for prediction heads.

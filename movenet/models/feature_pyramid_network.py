@@ -82,7 +82,6 @@ class FeaturePyramidNetwork(nn.Module):
         in_channels_list: List[int], # [24, 32, 64, 1280]
         out_channels_list: List[int], # [24, 32, 64, 64]
         fused_channels_list = List[int], # [24, 24, 32]
-        extra_blocks: Optional[ExtraFPNBlock] = None,
     ):
         super(FeaturePyramidNetwork, self).__init__()
         self.inner_blocks = nn.ModuleList()
@@ -105,10 +104,6 @@ class FeaturePyramidNetwork(nn.Module):
             if isinstance(m, nn.Conv2d):
                 nn.init.kaiming_uniform_(m.weight, a=1)
                 nn.init.constant_(m.bias, 0)
-
-        if extra_blocks is not None:
-            assert isinstance(extra_blocks, ExtraFPNBlock)
-        self.extra_blocks = extra_blocks
 
     def get_result_from_inner_blocks(self, x: Tensor, idx: int) -> Tensor:
         """
