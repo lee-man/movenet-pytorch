@@ -51,15 +51,15 @@ class MoveNet(nn.Module):
     MoveNet from Goolge. Please refer their blog: https://blog.tensorflow.org/2021/05/next-generation-pose-detection-with-movenet-and-tensorflowjs.html
 
     '''
-    def __init__(self, backbone, heads, head_conv):
+    def __init__(self, backbone, heads, head_conv, ft_size=48):
         super(MoveNet, self).__init__()
         self.out_channels = 24
         self.backbone = backbone
         self.heads = heads
-        self.ft_size = 192 / 4
+        self.ft_size = ft_size
         self.weight_to_center = self._generate_center_dist(self.ft_size).unsqueeze(2)
  
-        self.dist_y, self.dist_x = self._generate_dist_map()
+        self.dist_y, self.dist_x = self._generate_dist_map(self.ft_size)
         self.index_17 = torch.arange(0, 17).float()
 
         for head in self.heads:
@@ -102,24 +102,20 @@ class MoveNet(nn.Module):
         kpt_heatmap = torch.sigmoid(kpt_heatmap)
         center = torch.sigmoid(center)
 
-        top_y, top_x = self._top_with_center(center)
+        top_y, top_x = self._top_with_center(center, self.ft_size)
         center_coor = torch.tensor([top_y.squeeze(0), top_x.squeeze(0)]).type(torch.LongTensor)
         kpt_ys_regress, kpt_xs_regress = self._center_to_kpt(kpt_regress, center_coor)
-        kpt_ys_heatmap, kpt_xs_heatmap = self._kpt_from_heatmap(kpt_heatmap, kpt_ys_regress, kpt_xs_regress)
+        kpt_ys_heatmap, kpt_xs_heatmap = self._kpt_from_heatmap(kpt_heatmap, kpt_ys_regress, kpt_xs_regress, self.ft_size)
 
-        kpt_with_conf = self._kpt_from_offset(kpt_offset, kpt_ys_heatmap, kpt_xs_heatmap, kpt_heatmap)
+        kpt_with_conf = self._kpt_from_offset(kpt_offset, kpt_ys_heatmap, kpt_xs_heatmap, kpt_heatmap, self.ft_size)
         
         return kpt_with_conf
 
         
-    def draw(self, ft):
-        plt.imshow(ft.numpy().reshape(48, 48))
+    def _draw(self, ft):
+        plt.imshow(ft.numpy().reshape(self.ft_size, self.ft_size))
         # img = (data-np.min(data))/(np.max(data)-np.min(data))*255
         plt.show()
-
-
-
-
 
     def _generate_center_dist(self, ft_size=48, delta=1.8):
         weight_to_center = torch.zeros((int(ft_size), int(ft_size)))
@@ -167,8 +163,8 @@ class MoveNet(nn.Module):
         kpts_xs = topk_inds - kpts_ys * size
         return kpts_ys, kpts_xs
     
-    def _kpt_from_offset(self, kpt_offset, kpts_ys, kpts_xs, kpt_heatmap):
-        kpt_offset = kpt_offset.reshape(48, 48, 17, -1)
+    def _kpt_from_offset(self, kpt_offset, kpts_ys, kpts_xs, kpt_heatmap, size=48):
+        kpt_offset = kpt_offset.reshape(size, size, 17, -1)
         kpt_coordinate = torch.stack([kpts_ys.squeeze(0), kpts_xs.squeeze(0)], dim=1)
 
         kpt_offset_yx = torch.zeros((17, 2))
@@ -178,7 +174,6 @@ class MoveNet(nn.Module):
         kpt_conf = kpt_heatmap[kpt_coordinate[:, 0].type(torch.LongTensor), kpt_coordinate[:, 1].type(torch.LongTensor), self.index_17.type(torch.LongTensor)].reshape(17, -1)
 
         kpt_coordinate= (kpt_offset_yx + kpt_coordinate) * 0.02083333395421505
-        # kpt_coordinate = kpt_coordinate * 0.02083333395421505
         kpt_with_conf = torch.cat([kpt_coordinate, kpt_conf], dim=1)
 
         return kpt_with_conf

@@ -11,60 +11,6 @@ from torch import nn, Tensor
 
 from typing import Tuple, List, Dict, Optional
 
-
-class ExtraFPNBlock(nn.Module):
-    """
-    Base class for the extra block in the FPN.
-
-    Args:
-        results (List[Tensor]): the result of the FPN
-        x (List[Tensor]): the original feature maps
-        names (List[str]): the names for each one of the
-            original feature maps
-
-    Returns:
-        results (List[Tensor]): the extended set of results
-            of the FPN
-        names (List[str]): the extended set of names for the results
-    """
-    def forward(
-        self,
-        results: List[Tensor],
-        x: List[Tensor],
-        names: List[str],
-    ) -> Tuple[List[Tensor], List[str]]:
-        pass
-
-class ConvBNActivation(nn.Sequential):
-    def __init__(
-        self,
-        in_planes: int,
-        out_planes: int,
-        kernel_size: int = 3,
-        stride: int = 1,
-        groups: int = 1,
-        norm_layer = None,
-        activation_layer = None,
-        dilation: int = 1,
-    ) -> None:
-        padding = (kernel_size - 1) // 2 * dilation
-        if norm_layer is None:
-            norm_layer = nn.BatchNorm2d
-        if activation_layer is None:
-            activation_layer = nn.ReLU6
-        super().__init__(
-            nn.Conv2d(in_planes, out_planes, kernel_size, stride, padding, dilation=dilation, groups=groups,
-                      bias=False),
-            norm_layer(out_planes),
-            activation_layer(inplace=True)
-        )
-        self.out_channels = out_planes
-
-
-# necessary for backwards compatibility
-ConvBNReLU = ConvBNActivation
-
-
 class SeperableConv(nn.Module):
     def __init__(
         self,
@@ -221,47 +167,3 @@ class FeaturePyramidNetwork(nn.Module):
             last_inner = self.get_result_from_layer_blocks(last_inner, idx)
         
         return last_inner
-
-
-
-class LastLevelMaxPool(ExtraFPNBlock):
-    """
-    Applies a max_pool2d on top of the last feature map
-    """
-    def forward(
-        self,
-        x: List[Tensor],
-        y: List[Tensor],
-        names: List[str],
-    ) -> Tuple[List[Tensor], List[str]]:
-        names.append("pool")
-        x.append(F.max_pool2d(x[-1], 1, 2, 0))
-        return x, names
-
-
-class LastLevelP6P7(ExtraFPNBlock):
-    """
-    This module is used in RetinaNet to generate extra layers, P6 and P7.
-    """
-    def __init__(self, in_channels: int, out_channels: int):
-        super(LastLevelP6P7, self).__init__()
-        self.p6 = nn.Conv2d(in_channels, out_channels, 3, 2, 1)
-        self.p7 = nn.Conv2d(out_channels, out_channels, 3, 2, 1)
-        for module in [self.p6, self.p7]:
-            nn.init.kaiming_uniform_(module.weight, a=1)
-            nn.init.constant_(module.bias, 0)
-        self.use_P5 = in_channels == out_channels
-
-    def forward(
-        self,
-        p: List[Tensor],
-        c: List[Tensor],
-        names: List[str],
-    ) -> Tuple[List[Tensor], List[str]]:
-        p5, c5 = p[-1], c[-1]
-        x = p5 if self.use_P5 else c5
-        p6 = self.p6(x)
-        p7 = self.p7(F.relu(p6))
-        p.extend([p6, p7])
-        names.extend(["p6", "p7"])
-        return p, names
