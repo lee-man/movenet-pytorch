@@ -1,6 +1,17 @@
-## PoseNet Pytorch
+## Movenet
 
-This repository contains a PyTorch implementation (multi-pose only) of the Google TensorFlow.js Posenet model.
+This repository contains a PyTorch implementation of [Movenet](https://blog.tensorflow.org/2021/05/next-generation-pose-detection-with-movenet-and-tensorflowjs.html) from Google. The inference correctness is the point this repo focuses on. If you are interested in Movenet training, you can refer to my another repo [lee-man/movenet](https://github.com/lee-man/movenet).
+
+### Credits
+
+The original model, weights, etc. was created by Google and can be found at [tf hub](https://tfhub.dev/google/lite-model/movenet/singlepose/lightning/3).
+
+I will only released the model definition and pose decoding part of Movenet. No weights will be provided.
+
+Portions of the code in this repo are borrowed from the following repos:
+1. [Centernet](https://github.com/xingyizhou/CenterNet) for prediction heads.
+2. [Pytorch Vision](https://github.com/pytorch/vision) for MobileNet and Feature Pyramid Network.
+3. [https://github.com/rwightman/posenet-pytorch] for the other utility functions.
 
 This port is based on my Tensorflow Python (https://github.com/rwightman/posenet-python) conversion of the same model. An additional step of the algorithm was performed on the GPU in this implementation so it is faster and consumes less CPU (but more GPU). On a GTX 1080 Ti (or better) it can run over 130fps.
 
