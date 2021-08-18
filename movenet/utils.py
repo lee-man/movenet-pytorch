@@ -94,7 +94,7 @@ def draw_skel_and_kp(
     for ks, kc in zip(keypoint_scores, keypoint_coords):
         if ks < conf_thres:
             continue
-        cv_keypoints.append(cv2.KeyPoint(kc[1], kc[0], 10. * ks))
+        cv_keypoints.append(cv2.KeyPoint(kc[1], kc[0], 5))
 
     if cv_keypoints:
         out_img = cv2.drawKeypoints(

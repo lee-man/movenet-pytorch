@@ -36,7 +36,7 @@ def main():
         with torch.no_grad():
             input_image = torch.Tensor(input_image) # .cuda()
 
-            kpt_with_conf = model.decode(input_image)
+            kpt_with_conf = model(input_image)[0, 0, :, :]
             kpt_with_conf = kpt_with_conf.numpy()
 
         if args.output_dir:

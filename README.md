@@ -13,15 +13,17 @@ Portions of the code in this repo are borrowed from the following repos:
 2. [Pytorch Vision](https://github.com/pytorch/vision) for MobileNet and Feature Pyramid Network.
 3. [posenet-pytorch](https://github.com/rwightman/posenet-pytorch) for the other utility functions.
 4. [TF official tutorial for Movenet](https://www.tensorflow.org/hub/tutorials/movenet) for image drawing.
+5. [TensorFlow Lite Pose Estimation Android Demo](https://github.com/tensorflow/examples/tree/master/lite/examples/pose_estimation/android) for Android deployment.
 
 
 ### Notice
-In order to get in touch with the internal computational flow of Movenet, I use [netron](https://github.com/lutzroeder/netron) to visualize Movenet and my own implementation. You can use netron to compare the one with another. The model definitions in onnx format or tflite format are maintained in `_models` directory. There are a few things to pay attention to when I try to convert the movenet TFLite model to PyTorch model:
+In order to get in touch with the internal computational flow of Movenet, I use [netron](https://github.com/lutzroeder/netron) to visualize Movenet and my own implementation. You can use netron to compare the one with the other. The model definitions in onnx format or tflite format are maintained in `_models` directory. There are a few things to pay attention to when I convert the movenet TFLite model to PyTorch model:
 
 * Movenet version:
   * There are two versions of Movenet: Lightning and Thunder. The current code only supports Lightning ones.
 * Extract the weights:
   * Currently I use the most clumsy way to extract the weights from TFLite model: open it with netron, select the layers/ops I want to deal with, export the weights, and rename the numpy file using PyTorch convention.
+  * Once you extract all the weights, place them under `_models\weights` directory. `movenet.pth` will be generated under `_models` directory when you first run the program. 
 * Batchnorm:
   * As the TFLite fuses the convolutional layers and batchnorm layers together, the BatchNorm layers are removed from PyTorch MobileNet v2 implementation.
 * Padding:
@@ -32,29 +34,18 @@ In order to get in touch with the internal computational flow of Movenet, I use 
 
 ### Install
 
-A suitable Python 3.x environment with a recent version of PyTorch is required. Development and testing was done with Python 3.7.1 and PyTorch 1.0 w/ CUDA10 from Conda.
+A suitable Python 3.x environment with a recent version of PyTorch is required. Development and testing was done with Python 3.8.8 and PyTorch 1.9.0 w/o GPU from Conda.
 
-If you want to use the webcam demo, a pip version of opencv (`pip install python-opencv=3.4.5.20`) is required instead of the conda version. Anaconda's default opencv does not include ffpmeg/VideoCapture support. The python bindings for OpenCV 4.0 currently have a broken impl of drawKeypoints so please force install a 3.4.x version.
-
-A fresh conda Python 3.6/3.7 environment with the following installs should suffice: 
-```
-conda install -c pytorch pytorch cudatoolkit
-pip install requests opencv-python==3.4.5.20
-```
 
 ### Usage
 
-There are three demo apps in the root that utilize the PoseNet model. They are very basic and could definitely be improved.
-
-The first time these apps are run (or the library is used) model weights will be downloaded from the TensorFlow.js version and converted on the fly.
-
-For all demos, the model can be specified with the '--model` argument by using its integer depth multiplier (50, 75, 100, 101). The default is the 101 model.
+There are three demo apps and one notebook in the root that utilize the Movenet model. 
 
 #### image_demo.py 
 
 Image demo runs inference on an input folder of images and outputs those images with the keypoints and skeleton overlayed.
 
-`python image_demo.py --model 101 --image_dir ./images --output_dir ./output`
+`python image_demo.py --image_dir ./images --output_dir ./output`
 
 A folder of suitable test images can be downloaded by first running the `get_test_images.py` script.
 
@@ -65,5 +56,19 @@ A minimal performance benchmark based on image_demo. Images in `--image_dir` are
 #### webcam_demo.py
 
 The webcam demo uses OpenCV to capture images from a connected webcam. The result is overlayed with the keypoints and skeletons and rendered to the screen. The default args for the webcam_demo assume device_id=0 for the camera and that 1280x720 resolution is possible.
+
+#### movenet.ipynb
+
+The notebook borrowed from official movenet tutorial. You can go through it for better understanding of model.
+
+### Movenet deployment
+
+Google releases an Andorid demo for Tensorflow Lite Pose estimtaion application. Movenet is included in this demo. In other to compare the speed of my own implementation with the original one during inference phase, I add some scripts to convert the PyTorch Movenet model to Tensorflow Lite model and embed it into the Android demo.
+
+As there is no direct converter from Pytorch to TFLite, I follow the instructions in [Pytorch-ONNX-TFLite](https://github.com/sithu31296/PyTorch-ONNX-TFLite) to convert the Pytorch model to ONNX, ONNX to Tensorflow SavedModel, Tensorflow SavedModel to TFLite. For the prerequisite libs needed for the convertion, please refer to the original repo.
+
+The script `torch2tflite.py` cannot work for now. I will try to fix it as soon as possible. If I cannot work it out, I will try to run [PyTorch Mobiles](https://pytorch.org/mobile/home/) directly.
+
+
 
 

@@ -86,19 +86,28 @@ class MoveNet(nn.Module):
                 #     fill_fc_weights(fc)
             self.__setattr__(head, fc)
 
+    # def forward(self, x):
+    #     x  = x * 0.007843137718737125 - 1.0
+    #     x = self.backbone(x)
+    #     ret = {}
+    #     for head in self.heads:
+    #         ret[head] = self.__getattr__(head)(x)
+    #     return [ret]
+
+
     def forward(self, x):
+        # conv forward
         x  = x * 0.007843137718737125 - 1.0
         x = self.backbone(x)
         ret = {}
         for head in self.heads:
             ret[head] = self.__getattr__(head)(x)
-        return [ret]
 
+        x = ret
 
-    def decode(self, x):
-        x = self.forward(x)[0]
         kpt_heatmap, center, kpt_regress, kpt_offset = x['hm_hp'].squeeze(0).permute((1, 2, 0)), x['hm'].squeeze(0).permute((1, 2, 0)), x['hps'].squeeze(0).permute((1, 2, 0)), x['hp_offset'].squeeze(0).permute((1, 2, 0))
 
+        # pose decode
         kpt_heatmap = torch.sigmoid(kpt_heatmap)
         center = torch.sigmoid(center)
 
@@ -174,7 +183,7 @@ class MoveNet(nn.Module):
         kpt_conf = kpt_heatmap[kpt_coordinate[:, 0].type(torch.LongTensor), kpt_coordinate[:, 1].type(torch.LongTensor), self.index_17.type(torch.LongTensor)].reshape(17, -1)
 
         kpt_coordinate= (kpt_offset_yx + kpt_coordinate) * 0.02083333395421505
-        kpt_with_conf = torch.cat([kpt_coordinate, kpt_conf], dim=1)
+        kpt_with_conf = torch.cat([kpt_coordinate, kpt_conf], dim=1).reshape((1, 1, 17, 3))
 
         return kpt_with_conf
 

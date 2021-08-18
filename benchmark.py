@@ -32,7 +32,7 @@ def main():
         with torch.no_grad():
             input_image = torch.Tensor(images[filenames[i % len(filenames)]]) # .cuda()
 
-            kpt_with_conf = model.decode(input_image)
+            kpt_with_conf = model(input_image)
             kpt_with_conf = kpt_with_conf.numpy()
 
 
