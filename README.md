@@ -20,7 +20,7 @@ Portions of the code in this repo are borrowed from the following repos:
 In order to get in touch with the internal computational flow of Movenet, I use [netron](https://github.com/lutzroeder/netron) to visualize Movenet and my own implementation. You can use netron to compare the one with the other. The model definitions in onnx format or tflite format are maintained in `_models` directory. There are a few things to pay attention to when I convert the movenet TFLite model to PyTorch model:
 
 * Movenet version:
-  * There are two versions of Movenet: Lightning and Thunder. The current code only supports Lightning ones.
+  * There are two categories of Movenet: Lightning and Thunder. The current code only supports Lightning ones (version 3). Google haven't released the full-precision version of Lightning version 4. The version 4 model should have improved prediction accuracy as synthetic images with under-represented poses are inlcluded in the training dataset.
 * Extract the weights:
   * Currently I use the most clumsy way to extract the weights from TFLite model: open it with netron, select the layers/ops I want to deal with, export the weights, and rename the numpy file using PyTorch convention.
   * Once you extract all the weights, place them under `_models\weights` directory. `movenet.pth` will be generated under `_models` directory when you first run the program. 
@@ -53,6 +53,8 @@ A folder of suitable test images can be downloaded by first running the `get_tes
 
 A minimal performance benchmark based on image_demo. Images in `--image_dir` are pre-loaded and inference is run `--num_images` times with no drawing and no text output.
 
+From my benchmarking results, the current Pytorch inference can run around 20 fps on my Macbook pro, and around 203 fps on Nvidia GeForce 1080Ti.
+
 #### webcam_demo.py
 
 The webcam demo uses OpenCV to capture images from a connected webcam. The result is overlayed with the keypoints and skeletons and rendered to the screen. The default args for the webcam_demo assume device_id=0 for the camera and that 1280x720 resolution is possible.
@@ -68,7 +70,3 @@ Google releases an Andorid demo for Tensorflow Lite Pose estimtaion application.
 As there is no direct converter from Pytorch to TFLite, I follow the instructions in [Pytorch-ONNX-TFLite](https://github.com/sithu31296/PyTorch-ONNX-TFLite) to convert the Pytorch model to ONNX, ONNX to Tensorflow SavedModel, Tensorflow SavedModel to TFLite. For the prerequisite libs needed for the convertion, please refer to the original repo.
 
 The script `torch2tflite.py` cannot work for now. I will try to fix it as soon as possible. If I cannot work it out, I will try to run [PyTorch Mobiles](https://pytorch.org/mobile/home/) directly.
-
-
-
-
