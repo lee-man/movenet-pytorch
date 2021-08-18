@@ -3,6 +3,7 @@
 # Licensed under the MIT License.
 # Written by Bin Xiao (Bin.Xiao@microsoft.com)
 # Modified by Dequan Wang and Xingyi Zhou
+# Modified by Min Li
 # ------------------------------------------------------------------------------
 
 from __future__ import absolute_import
