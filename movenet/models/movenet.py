@@ -113,8 +113,8 @@ class MoveNet(nn.Module):
         center = torch.sigmoid(center)
 
         top_y, top_x = self._top_with_center(center, self.ft_size)
-        center_coor = torch.tensor([top_y.squeeze(0), top_x.squeeze(0)]).type(torch.LongTensor)
-        kpt_ys_regress, kpt_xs_regress = self._center_to_kpt(kpt_regress, center_coor)
+        top_y, top_x = top_y.squeeze(0).type(torch.LongTensor), top_x.squeeze(0).type(torch.LongTensor)
+        kpt_ys_regress, kpt_xs_regress = self._center_to_kpt(kpt_regress, top_y, top_x)
         kpt_ys_heatmap, kpt_xs_heatmap = self._kpt_from_heatmap(kpt_heatmap, kpt_ys_regress, kpt_xs_regress, self.ft_size)
 
         kpt_with_conf = self._kpt_from_offset(kpt_offset, kpt_ys_heatmap, kpt_xs_heatmap, kpt_heatmap, self.ft_size)
@@ -155,9 +155,9 @@ class MoveNet(nn.Module):
 
         return top_y, top_x
 
-    def _center_to_kpt(self, kpt_regress, center_coor):
-        kpt_coor = kpt_regress[center_coor[0], center_coor[1], :].reshape((17, -1))
-        ys, xs = kpt_coor[:, 0] + center_coor[0].float(), kpt_coor[:, 1] + center_coor[1].float()
+    def _center_to_kpt(self, kpt_regress, top_y, top_x):
+        kpt_coor = kpt_regress[top_y, top_x, :].reshape((17, -1))
+        ys, xs = kpt_coor[:, 0] + top_y.float(), kpt_coor[:, 1] + top_x.float()
         
         return (ys, xs)
 

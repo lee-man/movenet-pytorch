@@ -65,8 +65,10 @@ The notebook borrowed from official movenet tutorial. You can go through it for 
 
 ### Movenet deployment
 
-Google releases an Andorid demo for Tensorflow Lite Pose estimtaion application. Movenet is included in this demo. In other to compare the speed of my own implementation with the original one during inference phase, I add some scripts to convert the PyTorch Movenet model to Tensorflow Lite model and embed it into the Android demo.
+Google releases an Andorid demo for Tensorflow Lite Pose estimtaion application. Movenet is included in this demo. In order to compare the speed of my own implementation with the original one during inference phase, I add some scripts to convert the PyTorch Movenet model to Tensorflow Lite model and embed it into the Android demo.
 
 As there is no direct converter from Pytorch to TFLite, I follow the instructions in [Pytorch-ONNX-TFLite](https://github.com/sithu31296/PyTorch-ONNX-TFLite) to convert the Pytorch model to ONNX, ONNX to Tensorflow SavedModel, Tensorflow SavedModel to TFLite. For the prerequisite libs needed for the convertion, please refer to the original repo.
 
-The script `torch2tflite.py` cannot work for now. I will try to fix it as soon as possible. If I cannot work it out, I will try to run [PyTorch Mobiles](https://pytorch.org/mobile/home/) directly.
+**Important**: Using the current script will result in sub-optimized TFLite models, due to some un-supported ops being replaced by `Flex ops` in TFLite. Also, the fusion of `Conv + ReLU6` and `Conv + ReLU` is not performed.
+
+I will try to run [PyTorch Mobiles](https://pytorch.org/mobile/home/) directly and compare its inference speed with TFLite model.

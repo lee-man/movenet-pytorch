@@ -64,6 +64,11 @@ def main():
     import tensorflow as tf
     # convert the model
     converter = tf.lite.TFLiteConverter.from_saved_model(tf_model_path)
+    converter.target_spec.supported_ops = [
+        tf.lite.OpsSet.TFLITE_BUILTINS, # enable TensorFlow Lite ops.
+        tf.lite.OpsSet.SELECT_TF_OPS # enable TensorFlow ops.
+    ]
+    converter.optimizations = [tf.lite.Optimize.DEFAULT]
     tflite_model = converter.convert()
 
     # Save the model
