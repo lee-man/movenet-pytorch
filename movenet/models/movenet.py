@@ -149,39 +149,42 @@ class MoveNet(nn.Module):
     def _top_with_center(self, center, size=48):
         scores = center * self.weight_to_center
 
-        top_indx = torch.argmax(scores.view(1, -1, 1), dim=1)
-        top_y = torch.div(top_indx, size, rounding_mode='floor')
+        top_indx = torch.argmax(scores.view(1, 48 * 48, 1), dim=1)
+        # top_y = torch.div(top_indx, size, rounding_mode='floor')
+        top_y = (top_indx / size).int().float()
         top_x = top_indx - top_y * size
 
         return top_y, top_x
 
     def _center_to_kpt(self, kpt_regress, top_y, top_x):
-        kpt_coor = kpt_regress[top_y, top_x, :].reshape((17, -1))
+        kpt_coor = kpt_regress[top_y, top_x, :]
+        kpt_coor = kpt_coor.reshape((17, 2))
         ys, xs = kpt_coor[:, 0] + top_y.float(), kpt_coor[:, 1] + top_x.float()
         
         return (ys, xs)
 
     def _kpt_from_heatmap(self, kpt_heatmap, kpt_ys, kpt_xs, size=48):
-        y = self.dist_y - kpt_ys.reshape(1, 1, -1)
-        x = self.dist_x - kpt_xs.reshape(1, 1, -1)
+        y = self.dist_y - kpt_ys.reshape(1, 1, 17)
+        x = self.dist_x - kpt_xs.reshape(1, 1, 17)
         dist_weight = torch.sqrt(y * y + x * x) + 1.8
         
         scores = kpt_heatmap / dist_weight
-        scores = scores.reshape((1, -1, 17))
+        scores = scores.reshape((1, 48 * 48, 17))
         topk_inds = torch.argmax(scores, dim=1)
-        kpts_ys = torch.div(topk_inds, size, rounding_mode='floor')
+        # kpts_ys = torch.div(topk_inds, size, rounding_mode='floor')
+        kpts_ys = (topk_inds / size).int().float()
         kpts_xs = topk_inds - kpts_ys * size
         return kpts_ys, kpts_xs
     
     def _kpt_from_offset(self, kpt_offset, kpts_ys, kpts_xs, kpt_heatmap, size=48):
-        kpt_offset = kpt_offset.reshape(size, size, 17, -1)
+        kpt_offset = kpt_offset.reshape(size, size, 17, 2)
         kpt_coordinate = torch.stack([kpts_ys.squeeze(0), kpts_xs.squeeze(0)], dim=1)
 
         kpt_offset_yx = torch.zeros((17, 2))
         kpt_conf = torch.zeros((17, 1))
 
         kpt_offset_yx = kpt_offset[kpt_coordinate[:, 0].type(torch.LongTensor), kpt_coordinate[:, 1].type(torch.LongTensor), self.index_17.type(torch.LongTensor), :]
-        kpt_conf = kpt_heatmap[kpt_coordinate[:, 0].type(torch.LongTensor), kpt_coordinate[:, 1].type(torch.LongTensor), self.index_17.type(torch.LongTensor)].reshape(17, -1)
+        kpt_conf = kpt_heatmap[kpt_coordinate[:, 0].type(torch.LongTensor), kpt_coordinate[:, 1].type(torch.LongTensor), self.index_17.type(torch.LongTensor)].reshape(17, 1)
 
         kpt_coordinate= (kpt_offset_yx + kpt_coordinate) * 0.02083333395421505
         kpt_with_conf = torch.cat([kpt_coordinate, kpt_conf], dim=1).reshape((1, 1, 17, 3))

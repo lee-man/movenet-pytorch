@@ -43,6 +43,7 @@ def main():
     )
     print('==> finshed converting the model from Pytorch to ONNX...')
     print('The model is saved in %s' % onnx_model_path )
+    exit()
 
     ####### step 2: ONNX to TF #######
     print('==> Start to convert the model from ONNX to TF...')
