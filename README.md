@@ -71,9 +71,9 @@ As there is no direct converter from Pytorch to TFLite, I follow the instruction
 
 **Important**: Using the current script will result in sub-optimal TFLite models, due to some un-supported ops being replaced by `Flex ops` in TFLite. Also, the fusion of `Conv + ReLU6` and `Conv + ReLU` is not performed.
 
-One remaining problem is that going through the above procedure will results a TFLite model requiring inputs with NCHW ordering. The official Movenet TFLite asks for the inputs with shape of NHWC. This is due to different conventions adopted by Tensorflow and Pytorch. Thanks for PINTO0309's work [openvino2tensorflow](https://github.com/PINTO0309/openvino2tensorflow), there's a workaround to transpose the channels. I will check it later and complete the whole workflow from PyTorch model to mobile deployment.
+One remaining problem is that going through the above procedure will result a TFLite model requiring inputs with NCHW ordering. The official Movenet TFLite asks for the inputs with shape of NHWC. This is due to different conventions adopted by Tensorflow and Pytorch. Thanks for PINTO0309's work [openvino2tensorflow](https://github.com/PINTO0309/openvino2tensorflow), there's a workaround to transpose the channels. I will check it later and complete the whole workflow from PyTorch model to mobile deployment.
 
-**Update**: a more suitable way to convert PyTorch model to TFLite model should the one introduced in [PINTO's blog](https://qiita.com/PINTO/items/ed06e03eb5c007c2e102). But I still face some bugs right now. I think it is due to the slicing ops in my PyTorch code.
+**Update**: I follow the precedure introduced in [PINTO's blog](https://qiita.com/PINTO/items/ed06e03eb5c007c2e102). But I still face some bugs right now. The author help me generate the correct TFLite model (See [Issue](https://github.com/PINTO0309/openvino2tensorflow/issues/66))
 
 
 I will also try to run [PyTorch Mobiles](https://pytorch.org/mobile/home/) directly and compare its inference speed with TFLite model.
