@@ -69,7 +69,7 @@ Google releases an Andorid demo for Tensorflow Lite Pose estimtaion application.
 
 As there is no direct converter from Pytorch to TFLite, I follow the instructions in [Pytorch-ONNX-TFLite](https://github.com/sithu31296/PyTorch-ONNX-TFLite) to convert the Pytorch model to ONNX, ONNX to Tensorflow SavedModel, Tensorflow SavedModel to TFLite. For the prerequisite libs needed for the conversion, please refer to the original repo.
 
-**Important**: Using the current script will result in sub-optimal TFLite models, due to some un-supported ops being replaced by `Flex ops` in TFLite. Also, the fusion of `Conv + ReLU6` and `Conv + ReLU` is not performed.
+~~**Important**: Using the current script will result in sub-optimal TFLite models, due to some un-supported ops being replaced by `Flex ops` in TFLite. Also, the fusion of `Conv + ReLU6` and `Conv + ReLU` is not performed.~~
 
 One remaining problem is that going through the above procedure will result a TFLite model requiring inputs with NCHW ordering. The official Movenet TFLite asks for the inputs with shape of NHWC. This is due to different conventions adopted by Tensorflow and Pytorch. Thanks for PINTO0309's work [openvino2tensorflow](https://github.com/PINTO0309/openvino2tensorflow), there's a workaround to transpose the channels. I will check it later and complete the whole workflow from PyTorch model to mobile deployment.
 
