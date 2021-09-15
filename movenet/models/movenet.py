@@ -112,9 +112,9 @@ class MoveNet(nn.Module):
         kpt_heatmap = torch.sigmoid(kpt_heatmap)
         center = torch.sigmoid(center)
 
-        top_y, top_x = self._top_with_center(center, self.ft_size)
-        top_y, top_x = top_y.squeeze(0).type(torch.LongTensor), top_x.squeeze(0).type(torch.LongTensor)
-        kpt_ys_regress, kpt_xs_regress = self._center_to_kpt(kpt_regress, top_y, top_x)
+        ct_y, ct_x = self._top_with_center(center, self.ft_size)
+        ct_y, ct_x = ct_y.squeeze(0).type(torch.LongTensor), ct_x.squeeze(0).type(torch.LongTensor)
+        kpt_ys_regress, kpt_xs_regress = self._center_to_kpt(kpt_regress, ct_y, ct_x)
         kpt_ys_heatmap, kpt_xs_heatmap = self._kpt_from_heatmap(kpt_heatmap, kpt_ys_regress, kpt_xs_regress, self.ft_size)
 
         kpt_with_conf = self._kpt_from_offset(kpt_offset, kpt_ys_heatmap, kpt_xs_heatmap, kpt_heatmap, self.ft_size)
@@ -156,10 +156,10 @@ class MoveNet(nn.Module):
 
         return top_y, top_x
 
-    def _center_to_kpt(self, kpt_regress, top_y, top_x):
-        kpt_coor = kpt_regress[top_y, top_x, :]
-        kpt_coor = kpt_coor.reshape((17, 2))
-        ys, xs = kpt_coor[:, 0] + top_y.float(), kpt_coor[:, 1] + top_x.float()
+    def _center_to_kpt(self, kpt_regress, ct_y, ct_x):
+        kpt_coor = kpt_regress[ct_y, ct_x, :] #.squeeze(0)
+        # kpt_coor = kpt_coor.reshape((17, 2))
+        ys, xs = kpt_coor[0, :17] + ct_y.float(), kpt_coor[0, 17:] + ct_x.float()
         
         return (ys, xs)
 
@@ -170,10 +170,10 @@ class MoveNet(nn.Module):
         
         scores = kpt_heatmap / dist_weight
         scores = scores.reshape((1, 48 * 48, 17))
-        topk_inds = torch.argmax(scores, dim=1)
-        # kpts_ys = torch.div(topk_inds, size, rounding_mode='floor')
-        kpts_ys = (topk_inds / size).int().float()
-        kpts_xs = topk_inds - kpts_ys * size
+        top_inds = torch.argmax(scores, dim=1)
+        # kpts_ys = torch.div(top_inds, size, rounding_mode='floor')
+        kpts_ys = (top_inds / size).int().float()
+        kpts_xs = top_inds - kpts_ys * size
         return kpts_ys, kpts_xs
     
     def _kpt_from_offset(self, kpt_offset, kpts_ys, kpts_xs, kpt_heatmap, size=48):
