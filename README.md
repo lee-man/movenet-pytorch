@@ -59,6 +59,8 @@ From my benchmarking results, the current Pytorch inference can run around 20 fp
 
 The webcam demo uses OpenCV to capture images from a connected webcam. The result is overlayed with the keypoints and skeletons and rendered to the screen. The default args for the webcam_demo assume device_id=0 for the camera and that 1280x720 resolution is possible.
 
+**Note**: Currently the intelligent cropping algorithm doesn't work.
+
 #### movenet.ipynb
 
 The notebook borrowed from official movenet tutorial. You can go through it for better understanding of model.
