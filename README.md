@@ -79,3 +79,12 @@ One remaining problem is that going through the above procedure will result a TF
 
 
 I will also try to run [PyTorch Mobiles](https://pytorch.org/mobile/home/) directly and compare its inference speed with TFLite model.
+
+
+### 3D Pose Estimation
+This repo also exploits 2d-to-3d pose estimation, of which the inputs are obtained from MoveNet.
+
+#### Data Preprocessing 
+1. [SimpleBaseline](https://github.com/una-dinosauria/3d-pose-baseline):
+   > We apply standard normalization to the 2d inputs and 3d outputs by subtracting the mean and dividing by the standard deviation. Since we do not predict the global position of the 3d prediction, we zero-centre the 3d poses around the hip joint (in line with previous work and the standard protocol of Human3.6M).
+2. 

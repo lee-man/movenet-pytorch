@@ -8,6 +8,13 @@
 *.onnx
 *.tflite
 *.ptl
+*.cdf
+*.onnx
+*.pb
+*.bin
+*.mapping
+*.xml
+.json
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -237,3 +244,14 @@ lint/tmp/
 
 # Android Profiling
 *.hprof
+_models/converted_by_special_workaround/saved_model/variables/variables.data-00000-of-00001
+.gitignore
+_models/movenet/saved_model.pb
+_models/converted_by_special_workaround/replace.json
+_models/converted_by_special_workaround/saved_model/variables/variables.index
+_models/movenet/saved_model.pb
+.gitignore
+_models/movenet/saved_model.pb
+_models/movenet/saved_model.pb
+_models/movenet.onnx
+_models/movenet/saved_model.pb
