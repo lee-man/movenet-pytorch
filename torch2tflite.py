@@ -1,5 +1,4 @@
 import torch
-import torch.nn as nn
 from poseaug.models.model_factory import load_model as load_model_pose
 import onnx
 from onnx_tf.backend import prepare

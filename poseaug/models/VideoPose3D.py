@@ -75,8 +75,8 @@ class TemporalModelBase(nn.Module):
         input: bx16x2 / bx32
         output: bx16x3
         """
-        if len(x.shape) == 2:
-            x = x.view(x.shape[0], 16, 2)
+        # if len(x.shape) == 2:
+        #     x = x.view(x.shape[0], 16, 2)
         # pre-processing
         x = x.view(x.shape[0], 1, 16, 2)
 
