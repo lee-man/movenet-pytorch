@@ -63,7 +63,7 @@ The webcam demo uses OpenCV to capture images from a connected webcam. The resul
 
 #### movenet.ipynb
 
-The notebook borrowed from official movenet tutorial. You can go through it for better understanding of model.
+The notebook is borrowed from official movenet tutorial. You can go through it for the better understanding of model.
 
 ### Movenet deployment
 
