@@ -5,7 +5,7 @@ import argparse
 
 import numpy as np
 import matplotlib
-matplotlib.use('TkAgg')
+matplotlib.use('Agg')
 from matplotlib import pyplot as plt
 
 
@@ -64,7 +64,6 @@ def main():
 
         # convert canvas to image
         img = np.frombuffer(fig.canvas.tostring_rgb(), dtype=np.uint8)
-                #sep='')
         img  = img.reshape(fig.canvas.get_width_height()[::-1] + (3,))
 
         # img is rgb, convert to opencv's default bgr

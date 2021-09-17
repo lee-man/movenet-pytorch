@@ -84,7 +84,6 @@ I will also try to run [PyTorch Mobiles](https://pytorch.org/mobile/home/) direc
 ### 3D Pose Estimation
 This repo also exploits 2d-to-3d pose estimation, of which the inputs are obtained from MoveNet.
 
-#### Data Preprocessing 
-1. [SimpleBaseline](https://github.com/una-dinosauria/3d-pose-baseline):
-   > We apply standard normalization to the 2d inputs and 3d outputs by subtracting the mean and dividing by the standard deviation. Since we do not predict the global position of the 3d prediction, we zero-centre the 3d poses around the hip joint (in line with previous work and the standard protocol of Human3.6M).
-2. 
+The current 2D-to-3D model is from [PoseAug](https://github.com/jfzhang95/PoseAug) and the model structure I used is [VideoPose](https://github.com/facebookresearch/VideoPose3D). 
+
+Run the webcom [demo](webcam_demo_3d.py) to see the visualizaton of 3D-pose.
