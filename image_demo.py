@@ -32,7 +32,6 @@ def main():
     for f in filenames:
         input_image, draw_image = read_imgfile(
             f, args.size)
-
         with torch.no_grad():
             input_image = torch.Tensor(input_image) # .cuda()
 

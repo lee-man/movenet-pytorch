@@ -8,7 +8,6 @@ from torchvision.ops import misc as misc_nn_ops
 from torchvision.models._utils import IntermediateLayerGetter
 # from torchvision.models import mobilenet
 from .mobilenetv2 import mobilenet_v2
-from torchvision.models import resnet
 
 
 class BackboneWithFPN(nn.Module):

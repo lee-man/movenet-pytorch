@@ -73,27 +73,11 @@ class MoveNet(nn.Module):
                   nn.Conv2d(head_conv, classes, 
                     kernel_size=1, stride=1, 
                     padding=0, bias=True))
-                # if 'hm' in head:
-                #     fc[-1].bias.data.fill_(-2.19)
-                # else:
-                #     fill_fc_weights(fc)
             else:
                 fc = nn.Conv2d(64, classes, 
                   kernel_size=1, stride=1, 
                   padding=0, bias=True)
-                # if 'hm' in head:
-                #     fc.bias.data.fill_(-2.19)
-                # else:
-                #     fill_fc_weights(fc)
             self.__setattr__(head, fc)
-
-    # def forward(self, x):
-    #     x  = x * 0.007843137718737125 - 1.0
-    #     x = self.backbone(x)
-    #     ret = {}
-    #     for head in self.heads:
-    #         ret[head] = self.__getattr__(head)(x)
-    #     return [ret]
 
 
     def forward(self, x):
