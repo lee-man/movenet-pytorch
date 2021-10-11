@@ -1,12 +1,11 @@
 # Movenet Pytorch
 
-This repository contains a PyTorch implementation of [Movenet](https://blog.tensorflow.org/2021/05/next-generation-pose-detection-with-movenet-and-tensorflowjs.html) from Google. The inference correctness is the point this repo focuses on. If you are interested in Movenet training, you can refer to my another repo [lee-man/movenet](https://github.com/lee-man/movenet).
+This repository contains a PyTorch implementation of [Movenet](https://blog.tensorflow.org/2021/05/next-generation-pose-detection-with-movenet-and-tensorflowjs.html) from Google. The inference correctness is the point this repo focuses on. If you are interested in Movenet training/finetuning, you can refer to my another repo [lee-man/movenet](https://github.com/lee-man/movenet).
 
 ### Credits
 
 The original model, weights, etc. was created by Google and can be found at [tf hub](https://tfhub.dev/google/lite-model/movenet/singlepose/lightning/3).
 
-I only release the model definition and pose decoding part of Movenet. No weights will be provided.
 
 Portions of the code in this repo are borrowed from the following repos:
 1. [Centernet](https://github.com/xingyizhou/CenterNet) for prediction heads.

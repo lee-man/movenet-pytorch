@@ -1,3 +1,5 @@
+*.tar
+
 .DS_Store
 *.npy
 *.pth
