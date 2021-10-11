@@ -22,9 +22,3 @@ def load_model(model_id="videopose", model_dir=MODEL_DIR):
 
     return model
 
-# if __name__ == "__main__":
-#     # execute only if run as a script
-#     model = load_model()
-#     input = torch.rand((1024, 16, 2))
-#     output = model(input)
-#     print(output.size())

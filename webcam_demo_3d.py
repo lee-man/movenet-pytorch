@@ -50,8 +50,8 @@ def main():
         with torch.no_grad():
             input_image = torch.Tensor(input_image) #.cuda()
             kpt_with_conf = model(input_image)[0, 0, :, :]
-            inputs_2d = create_2d_data(kpt_with_conf) # [1, 16, 2]
-            outputs_3d = pose_aug(inputs_2d) # [1, 16, 3]
+            inputs_2d = create_2d_data(kpt_with_conf) 
+            outputs_3d = pose_aug(inputs_2d)
             outputs_3d = outputs_3d[:, :, :] - outputs_3d[:, :1, :]
             
         kpt_with_conf = kpt_with_conf.numpy()
