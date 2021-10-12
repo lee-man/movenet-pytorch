@@ -79,6 +79,8 @@ One remaining problem is that going through the above procedure will result a TF
 
 I will also try to run [PyTorch Mobiles](https://pytorch.org/mobile/home/) directly and compare its inference speed with TFLite model.
 
+**Update**: I will replace the advanced slicing ops in post-processing with `gather` operation.
+
 
 ### 3D Pose Estimation
 This repo also exploits 2d-to-3d pose estimation, of which the inputs are obtained from MoveNet.
