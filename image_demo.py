@@ -9,8 +9,8 @@ from movenet.utils import read_imgfile, draw_skel_and_kp
 
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--model', type=str, default="movenet")
-parser.add_argument('--size', type=int, default=192)
+parser.add_argument('--model', type=str, default="movenet_thunder")
+parser.add_argument('--size', type=int, default=256)
 parser.add_argument('--conf_thres', type=float, default=0.3)
 parser.add_argument('--image_dir', type=str, default='./images')
 parser.add_argument('--output_dir', type=str, default='./output')

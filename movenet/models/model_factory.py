@@ -11,7 +11,7 @@ heads = {'hm': 1, 'hps': 34, 'hm_hp': 17, 'hp_offset': 34}
 
 
 def load_model(model_id, output_stride=4, model_dir=MODEL_DIR):
-    assert model_id == 'movenet', 'The model name should be movenet'
+    assert model_id == 'movenet_thunder', 'The model name should be movenet'
     assert output_stride == 4, 'The current model only support output stride being 4.'
     model_path = os.path.join(model_dir, model_id + '.pth')
     if not os.path.exists(model_path):
@@ -20,7 +20,7 @@ def load_model(model_id, output_stride=4, model_dir=MODEL_DIR):
         convert(model_id, model_dir, check=False)
         assert os.path.exists(model_path)
 
-    model = get_pose_net(0, heads)
+    model = get_pose_net(0, heads, model_type = 'thunder')
     model_state_dict = model.state_dict()
 
     state_dict = torch.load(model_path)

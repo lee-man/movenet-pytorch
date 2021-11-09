@@ -185,8 +185,18 @@ class MoveNet(nn.Module):
 
 
 
-def get_pose_net(num_layers, heads, head_conv=96):
+# def get_pose_net(num_layers, heads, head_conv=96):
+#     assert num_layers == 0
+#     backbone = mobilenet_backbone('mobilenet_v2', pretrained=False, fpn=True, trainable_layers=0)
+#     model = MoveNet(backbone, heads, head_conv=head_conv)
+#     return model
+
+def get_pose_net(num_layers, heads, head_conv=96, model_type = 'lighting'):
     assert num_layers == 0
-    backbone = mobilenet_backbone('mobilenet_v2', pretrained=False, fpn=True, trainable_layers=0)
-    model = MoveNet(backbone, heads, head_conv=head_conv)
+    backbone = mobilenet_backbone('mobilenet_v2', pretrained=False, fpn=True, trainable_layers=0, model_type = model_type)
+    if model_type == 'lighting':
+        ft_size = 48
+    else:
+        ft_size = 64
+    model = MoveNet(backbone, heads, head_conv=head_conv, ft_size = ft_size)
     return model
