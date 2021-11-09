@@ -141,7 +141,8 @@ class MoveNet(nn.Module):
         return top_ind
 
     def _center_to_kpt(self, kpt_regress, ct_ind, ft_size=48):
-        ct_y = torch.div(ct_ind, ft_size, rounding_mode='floor')
+        # ct_y = torch.div(ct_ind, ft_size, rounding_mode='floor')
+        ct_y = torch.floor_divide(ct_ind, ft_size)
         # ct_y = (ct_ind.float() / ft_size).int().float()
         ct_x = ct_ind - ct_y * ft_size
 
@@ -159,13 +160,14 @@ class MoveNet(nn.Module):
         dist_weight = torch.sqrt(y * y + x * x) + 1.8
         
         scores = kpt_heatmap / dist_weight
-        scores = scores.reshape((1, 48 * 48, 17))
+        scores = scores.reshape((1, self.ft_size *  self.ft_size, 17))
         top_inds = torch.argmax(scores, dim=1)
         
         return top_inds
     
     def _kpt_from_offset(self, kpt_offset, kpt_top_inds, kpt_heatmap, size=48):
-        kpts_ys = torch.div(kpt_top_inds, size, rounding_mode='floor')
+        # kpts_ys = torch.div(kpt_top_inds, size, rounding_mode='floor')
+        kpts_ys = torch.floor_divide(kpt_top_inds, size)
         # kpts_ys = (kpt_top_inds.float() / size).int().float()
         kpts_xs = kpt_top_inds - kpts_ys * size
         kpt_coordinate = torch.stack((kpts_ys.squeeze(0), kpts_xs.squeeze(0)), dim=1)
