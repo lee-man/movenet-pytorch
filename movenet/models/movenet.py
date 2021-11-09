@@ -137,7 +137,7 @@ class MoveNet(nn.Module):
     def _top_with_center(self, center):
         scores = center * self.weight_to_center
 
-        top_ind = torch.argmax(scores.view(1, 48 * 48, 1), dim=1)
+        top_ind = torch.argmax(scores.view(1, self.ft_size * self.ft_size, 1), dim=1)
         return top_ind
 
     def _center_to_kpt(self, kpt_regress, ct_ind, ft_size=48):
