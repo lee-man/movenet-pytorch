@@ -48,8 +48,8 @@ def main():
         model,                  # PyTorch Model
         sample_input,                    # Input tensor
         onnx_model_path,        # Output file (eg. 'output_model.onnx')
-        opset_version=12,       # Operator support version
-        # opset_version=9,
+        # opset_version=12,       # Operator support version
+        opset_version=9,
         input_names=['input'],   # Input tensor name (arbitary)
         output_names=['output'] # Output tensor name (arbitary)
     )
@@ -65,7 +65,7 @@ def main():
 
     # convert with onnx-tf:
     from onnx_tf.backend import prepare
-    tf_rep = prepare(onnx_model) #, device='CPU')
+    tf_rep = prepare(onnx_model, auto_cast=True) #, device='CPU')
 
     # export TF model
     tf_rep.export_graph(tf_model_path)
@@ -79,9 +79,9 @@ def main():
     converter = tf.lite.TFLiteConverter.from_saved_model(tf_model_path)
     converter.target_spec.supported_ops = [
         tf.lite.OpsSet.TFLITE_BUILTINS, # enable TensorFlow Lite ops.
-        tf.lite.OpsSet.SELECT_TF_OPS # enable TensorFlow ops.
+        # tf.lite.OpsSet.SELECT_TF_OPS # enable TensorFlow ops.
     ]
-    converter.optimizations = [tf.lite.Optimize.DEFAULT]
+    # converter.optimizations = [tf.lite.Optimize.DEFAULT]
     tflite_model = converter.convert()
 
     # Save the model
