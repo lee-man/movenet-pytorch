@@ -24,7 +24,8 @@ def _process_input(source_img, size=192, crop_region=None):
         input_img = cv2.resize(source_img, (size, size),
                            interpolation=cv2.INTER_LINEAR)
     input_img = cv2.cvtColor(input_img, cv2.COLOR_BGR2RGB).astype(np.float32)
-    input_img = input_img.transpose((2, 0, 1)).reshape(1, 3, size, size)
+    # input_img = input_img.transpose((2, 0, 1)).reshape(1, 3, size, size)
+    input_img = input_img.reshape(1, size, size, 3)
 
     return input_img, source_img
 

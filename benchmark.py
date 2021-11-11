@@ -7,11 +7,16 @@ from movenet.models.model_factory import load_model
 from movenet.utils import read_imgfile, draw_skel_and_kp
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--model', type=str, default="movenet")
-parser.add_argument('--size', type=int, default=192)
+parser.add_argument('--model', type=str, default="movenet_lightning", choices=["movenet_lightning", "movenet_thunder"])
 parser.add_argument('--image_dir', type=str, default='./images')
 parser.add_argument('--num_images', type=int, default=1000)
 args = parser.parse_args()
+if args.model == "movenet_lightning":
+    args.size = 192
+    args.ft_size = 48
+else:
+    args.size = 256
+    args.ft_size = 64
 
 
 def main():

@@ -19,14 +19,19 @@ from poseaug.models.model_factory import load_model as load_model_pose
 from poseaug.utils import create_2d_data, show3Dpose
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--model', type=str, default="movenet")
+parser.add_argument('--model', type=str, default="movenet_lightning", choices=["movenet_lightning", "movenet_thunder"])
 parser.add_argument('--cam_id', type=int, default=0)
 parser.add_argument('--cam_width', type=int, default=1000)
 parser.add_argument('--cam_height', type=int, default=1000)
-parser.add_argument('--size', type=int, default=192)
 parser.add_argument('--conf_thres', type=float, default=0.3)
 parser.add_argument('--cropping', action='store_false')
 args = parser.parse_args()
+if args.model == "movenet_lightning":
+    args.size = 192
+    args.ft_size = 48
+else:
+    args.size = 256
+    args.ft_size = 64
 
 
 def main():

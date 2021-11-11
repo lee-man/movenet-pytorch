@@ -141,8 +141,8 @@ class MobileNetV2(nn.Module):
         if norm_layer is None:
             norm_layer = nn.BatchNorm2d
 
-        input_channel = 32 * 1.75
-        last_channel = 1280
+        input_channel = 32
+        self.last_channel = 1280
 
         if inverted_residual_setting is None:
             inverted_residual_setting = [
@@ -163,7 +163,7 @@ class MobileNetV2(nn.Module):
 
         # building first layer
         input_channel = _make_divisible(input_channel * width_mult, round_nearest)
-        self.last_channel = _make_divisible(last_channel * max(1.0, width_mult), round_nearest)
+        # self.last_channel = _make_divisible(last_channel * max(1.0, width_mult), round_nearest)
         features: List[nn.Module] = [ConvBNReLU(3, input_channel, stride=2, norm_layer=norm_layer)]
         # building inverted residual blocks
         for t, c, n, s in inverted_residual_setting:

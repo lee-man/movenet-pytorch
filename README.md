@@ -19,7 +19,7 @@ Portions of the code in this repo are borrowed from the following repos:
 In order to get in touch with the internal computational flow of Movenet, I use [netron](https://github.com/lutzroeder/netron) to visualize Movenet and my own implementation. You can use netron to compare the one with the other. The model definitions in onnx format or tflite format are maintained in `_models` directory. There are a few things to pay attention to when I convert the movenet TFLite model to PyTorch model:
 
 * Movenet version:
-  * There are two categories of Movenet: Lightning and Thunder. The current code only supports Lightning ones (version 3). Google haven't released the full-precision version of Lightning version 4. The version 4 model should have improved prediction accuracy as synthetic images with under-represented poses are inlcluded in the training dataset.
+  * There are two categories of Movenet: Lightning and Thunder. The current code supports Lightning version 3 and Thunder version 3. Google haven't released the full-precision version of Lightning version 4. The version 4 model should have improved prediction accuracy as synthetic images with under-represented poses are inlcluded in the training dataset.
 * Extract the weights:
   * Currently I use the most clumsy way to extract the weights from TFLite model: open it with netron, select the layers/ops I want to deal with, export the weights, and rename the numpy file using PyTorch convention.
   * Once you extract all the weights, place them under `_models\weights` directory. `movenet.pth` will be generated under `_models` directory when you first run the program. 
@@ -66,20 +66,16 @@ The notebook is borrowed from official movenet tutorial. You can go through it f
 
 ### Movenet deployment
 
-Google releases an Andorid demo for Tensorflow Lite Pose estimtaion application. Movenet is included in this demo. In order to compare the speed of my own implementation with the original one during inference phase, I add some scripts to convert the PyTorch Movenet model to Tensorflow Lite model and embed it into the Android demo.
+Google releases an Andorid [demo](https://github.com/tensorflow/examples/tree/master/lite/examples/pose_estimation/android) for Tensorflow Lite Pose estimtaion application. Movenet is included in this demo. In order to compare the speed of my own implementation with the original one during inference phase, I add some scripts to convert the PyTorch Movenet model to Tensorflow Lite model and embed it into the Android demo.
 
 As there is no direct converter from Pytorch to TFLite, I follow the instructions in [Pytorch-ONNX-TFLite](https://github.com/sithu31296/PyTorch-ONNX-TFLite) to convert the Pytorch model to ONNX, ONNX to Tensorflow SavedModel, Tensorflow SavedModel to TFLite. For the prerequisite libs needed for the conversion, please refer to the original repo.
 
-~~**Important**: Using the current script will result in sub-optimal TFLite models, due to some un-supported ops being replaced by `Flex ops` in TFLite. Also, the fusion of `Conv + ReLU6` and `Conv + ReLU` is not performed.~~
-
-One remaining problem is that going through the above procedure will result a TFLite model requiring inputs with NCHW ordering. The official Movenet TFLite asks for the inputs with shape of NHWC. This is due to different conventions adopted by Tensorflow and Pytorch. Thanks for PINTO0309's work [openvino2tensorflow](https://github.com/PINTO0309/openvino2tensorflow), there's a workaround to transpose the channels. I will check it later and complete the whole workflow from PyTorch model to mobile deployment.
-
-**Update**: I follow the precedure introduced in [PINTO's blog](https://qiita.com/PINTO/items/ed06e03eb5c007c2e102). But I still face some bugs right now. The author help me generate the correct TFLite model (See [Issue](https://github.com/PINTO0309/openvino2tensorflow/issues/66))
+**IMPORTANT**: the above conversion is far from satisfactory. The reason is that many `transpose` ops will be inserted into computational graph from NCHW-onnx to NHWC-tf. Plus, the ops are not merged suitabliy, such as ReLU6, Conv with `same` mode, etc. I searched the related discussion and haven't find a perfect workaround. There are two potential ways:
+1. PINTO0309's work [openvino2tensorflow](https://github.com/PINTO0309/openvino2tensorflow), there's a workaround to transpose the channels. But the decoding part of MoveNet contains many tensor operations, which cannot be handled automatically by `openvino2tensorflow`. See [Issue](https://github.com/PINTO0309/openvino2tensorflow/issues/66).
+2. [TinyNeuralNetwork](https://github.com/alibaba/TinyNeuralNetwork) from Alibaba. The authors claim that this tool will do optimization of graphs and remove uneccessary ops (especially `transpose` ops). I tried to convert the MoveNet Pytorch model to TFLite, but some errors happened: unsupported ops: argmax, gather, expand. I created an issue in their repo already. Let us hope they can support these ops.
 
 
 I will also try to run [PyTorch Mobiles](https://pytorch.org/mobile/home/) directly and compare its inference speed with TFLite model.
-
-**Update**: I will replace the advanced slicing ops in post-processing with `gather` operation.
 
 
 ### 3D Pose Estimation

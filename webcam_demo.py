@@ -9,18 +9,22 @@ from movenet.utils import read_cap, draw_skel_and_kp
 # from movenet.utils import init_crop_region, determine_crop_region
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--model', type=str, default="movenet")
+parser.add_argument('--model', type=str, default="movenet_lightning", choices=["movenet_lightning", "movenet_thunder"])
 parser.add_argument('--cam_id', type=int, default=0)
 parser.add_argument('--cam_width', type=int, default=1280)
 parser.add_argument('--cam_height', type=int, default=720)
-parser.add_argument('--size', type=int, default=192)
 parser.add_argument('--conf_thres', type=float, default=0.3)
-# parser.add_argument('--cropping', action='store_false')
 args = parser.parse_args()
 
+if args.model == "movenet_lightning":
+    args.size = 192
+    args.ft_size = 48
+else:
+    args.size = 256
+    args.ft_size = 64
 
 def main():
-    model = load_model(args.model)
+    model = load_model(args.model, ft_size=args.ft_size)
     # model = model.cuda()
 
     cap = cv2.VideoCapture(args.cam_id)
