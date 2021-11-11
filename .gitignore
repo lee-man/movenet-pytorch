@@ -258,3 +258,8 @@ _models/movenet/saved_model.pb
 _models/movenet.onnx
 _models/movenet/saved_model.pb
 _models/movenet.onnx
+_models/movenet_tf/variables/variables.data-00000-of-00001
+_models/movenet_tf/variables/variables.index
+_models/converted_by_special_workaround/openvino2tensorflow_special_custom.py
+_models/movenet_thunder_tf/variables/variables.index
+_models/movenet_thunder_tf/variables/variables.data-00000-of-00001
