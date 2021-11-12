@@ -66,9 +66,9 @@ The notebook is borrowed from the official movenet tutorial. You can go through 
 
 ### Movenet deployment
 
-Google releases an Android [demo](https://github.com/tensorflow/examples/tree/master/lite/examples/pose_estimation/android) for Tensorflow Lite Pose estimation application. Movenet is included in this demo. In order to compare the speed of my own implementation with the original one during the inference phase, I add some scripts to convert the PyTorch Movenet model to Tensorflow Lite model and embed it into the Android demo.
+Google releases an Android [demo](https://github.com/tensorflow/examples/tree/master/lite/examples/pose_estimation/android) for Tensorflow Lite Pose estimation application. Movenet is included in this demo. In order to compare the speed of my own implementation with the original one during the inference phase, I tried to convert the PyTorch Movenet model to Tensorflow Lite model and embed it into the Android demo. However, there're many issues during the conversion. 
 
-**Update**: The great work [TinyNeuralNetwork](https://github.com/alibaba/TinyNeuralNetwork) solves the above problems! Thanks for their help!!! Now the PyTorch model can be directly converted into TFLite model.
+**Update**: The great work [TinyNeuralNetwork](https://github.com/alibaba/TinyNeuralNetwork) solves all problems! Thanks for their help!!! Now the PyTorch model can be directly converted into TFLite model. Check [export.py](export.py).
 
 
 ### 3D Pose Estimation
