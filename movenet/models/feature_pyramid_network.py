@@ -158,9 +158,9 @@ class FeaturePyramidNetwork(nn.Module):
             inner_lateral = self.get_result_from_inner_blocks(x[idx], idx)
 
             # for pytorch inference
-            # inner_top_down = F.interpolate(last_inner, scale_factor=2, mode="bilinear", align_corners=False)
+            inner_top_down = F.interpolate(last_inner, scale_factor=2, mode="bilinear", align_corners=False)
             # for model convertion, please comment the above line and uncomment the following line.
-            inner_top_down = F.interpolate(last_inner, scale_factor=2, mode="nearest")
+            # inner_top_down = F.interpolate(last_inner, scale_factor=2, mode="nearest")
             last_inner = inner_lateral + inner_top_down
             last_inner = self.get_result_from_layer_blocks(last_inner, idx)
         

@@ -29,7 +29,7 @@ In order to get in touch with the internal computational flow of Movenet, I use 
   * The ways how Tensorflow and PyTorch do the padding are slightly different. In Tensorflow and original Movenet, the padding mode is specified as `same`, and it will do the asymmetry padding with the setting: `stride=2, kernel_size=3`. But in PyTorch, the padding will be symmetry. So I add `nn.ZeroPad2d` layers before Conv2d layer with `stride=2, kernel_size=3`.
 * Feature Pyramid Network:
   * The structure of FPN used in Movenet is different from the official implementation in Pytorch Vision. In Movenet, the size of feature map for top-donwn structure of FPN is incrementally increased.
-  * The upsampling mechanism used in Movenet is `bilinear` interpolatation with `align_corners=False, half_pixel_centers=True`. It's fine to use this setting under PyTorch inference. But it seems that ONNX doesn't support this kind of operation yet, so I change it to `nearest` mode when I convert the model to ONNX format.
+  * ~~The upsampling mechanism used in Movenet is `bilinear` interpolatation with `align_corners=False, half_pixel_centers=True`. It's fine to use this setting under PyTorch inference. But it seems that ONNX doesn't support this kind of operation yet, so I change it to `nearest` mode when I convert the model to ONNX format.~~
 
 ### Install
 
@@ -74,6 +74,7 @@ As there is no direct converter from Pytorch to TFLite, I follow the instruction
 1. PINTO0309's work [openvino2tensorflow](https://github.com/PINTO0309/openvino2tensorflow). There's a workaround to transpose the channels. But the decoding part of MoveNet contains many tensor operations, which cannot be handled automatically by `openvino2tensorflow`. See [Issue](https://github.com/PINTO0309/openvino2tensorflow/issues/66).
 2. [TinyNeuralNetwork](https://github.com/alibaba/TinyNeuralNetwork) from Alibaba. The authors claim that this tool will do optimization of graphs and remove unnecessary ops (especially `transpose` ops). I tried to convert the MoveNet Pytorch model to TFLite, but some errors happened: unsupported ops: argmax, gather, expand. I created an issue in their repo already. Let us hope they can support these ops.
 
+**Update**: The great work [TinyNeuralNetwork](https://github.com/alibaba/TinyNeuralNetwork) solve the above problems! Thanks for their help!!!
 
 I will also try to run [PyTorch Mobiles](https://pytorch.org/mobile/home/) directly and compare its inference speed with TFLite model.
 

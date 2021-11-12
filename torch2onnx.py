@@ -6,8 +6,8 @@ import torch
 import sys
 
 from movenet.models.model_factory import load_model
-# sys.path.append('TinyNeuralNetwork')
-# from TinyNeuralNetwork.tinynn.converter import TFLiteConverter
+sys.path.append('TinyNeuralNetwork')
+from TinyNeuralNetwork.tinynn.converter import TFLiteConverter
 
 
 parser = argparse.ArgumentParser()
@@ -29,6 +29,7 @@ def main():
     onnx_model_path = '_models/{}.onnx'.format(args.model)
     tf_model_path = '_models/{}_tf'.format(args.model)
     tflite_model_path = '_models/{}.tflite'.format(args.model)
+    script_model_path = '_models/{}.pt'.format(args.model)
 
     # load the PyTorch model
     model = load_model(args.model, ft_size=args.ft_size)
@@ -40,8 +41,10 @@ def main():
     # prepare the dummy input
     sample_input = torch.rand((1, args.size, args.size, 3))
 
-    # converter = TFLiteConverter(model, sample_input, tflite_model_path)
-    # converter.convert()
+
+    converter = TFLiteConverter(model, sample_input, tflite_model_path, input_transpose=False)
+    converter.convert()
+    exit()
 
     # export to ONNX format
     torch.onnx.export(
