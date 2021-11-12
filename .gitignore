@@ -1,5 +1,8 @@
 *.tar
-
+**/*.pyc
+**/.DS_Store
+**/.idea
+**/.ipynb_checkpoints
 .DS_Store
 *.npy
 *.pth

@@ -41,7 +41,6 @@ def main():
     # prepare the dummy input
     sample_input = torch.rand((1, args.size, args.size, 3))
 
-
     converter = TFLiteConverter(model, sample_input, tflite_model_path, input_transpose=False)
     converter.convert()
     exit()

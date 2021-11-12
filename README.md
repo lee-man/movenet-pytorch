@@ -68,15 +68,7 @@ The notebook is borrowed from the official movenet tutorial. You can go through 
 
 Google releases an Android [demo](https://github.com/tensorflow/examples/tree/master/lite/examples/pose_estimation/android) for Tensorflow Lite Pose estimation application. Movenet is included in this demo. In order to compare the speed of my own implementation with the original one during the inference phase, I add some scripts to convert the PyTorch Movenet model to Tensorflow Lite model and embed it into the Android demo.
 
-As there is no direct converter from Pytorch to TFLite, I follow the instructions in [Pytorch-ONNX-TFLite](https://github.com/sithu31296/PyTorch-ONNX-TFLite) to convert the Pytorch model to ONNX, ONNX to Tensorflow SavedModel, Tensorflow SavedModel to TFLite. For the prerequisite libs needed for the conversion, please refer to the original repo.
-
-**IMPORTANT**: the above conversion is far from satisfactory. The reason is that many `transpose` ops will be inserted into the computational graph from NCHW-onnx to NHWC-tf. Plus, the ops are not merged suitably, such as ReLU6, Conv with `same` mode, etc. I searched the related discussion and haven't found a perfect workaround. There are two potential ways:
-1. PINTO0309's work [openvino2tensorflow](https://github.com/PINTO0309/openvino2tensorflow). There's a workaround to transpose the channels. But the decoding part of MoveNet contains many tensor operations, which cannot be handled automatically by `openvino2tensorflow`. See [Issue](https://github.com/PINTO0309/openvino2tensorflow/issues/66).
-2. [TinyNeuralNetwork](https://github.com/alibaba/TinyNeuralNetwork) from Alibaba. The authors claim that this tool will do optimization of graphs and remove unnecessary ops (especially `transpose` ops). I tried to convert the MoveNet Pytorch model to TFLite, but some errors happened: unsupported ops: argmax, gather, expand. I created an issue in their repo already. Let us hope they can support these ops.
-
-**Update**: The great work [TinyNeuralNetwork](https://github.com/alibaba/TinyNeuralNetwork) solve the above problems! Thanks for their help!!!
-
-I will also try to run [PyTorch Mobiles](https://pytorch.org/mobile/home/) directly and compare its inference speed with TFLite model.
+**Update**: The great work [TinyNeuralNetwork](https://github.com/alibaba/TinyNeuralNetwork) solves the above problems! Thanks for their help!!! Now the PyTorch model can be directly converted into TFLite model.
 
 
 ### 3D Pose Estimation
