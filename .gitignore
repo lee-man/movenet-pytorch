@@ -263,3 +263,7 @@ _models/movenet_tf/variables/variables.index
 _models/converted_by_special_workaround/openvino2tensorflow_special_custom.py
 _models/movenet_thunder_tf/variables/variables.index
 _models/movenet_thunder_tf/variables/variables.data-00000-of-00001
+README.md
+_models/movenet_thunder.pt
+_models/movenet_lightning_tf/variables/variables.data-00000-of-00001
+_models/movenet_lightning_tf/variables/variables.index
