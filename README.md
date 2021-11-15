@@ -70,6 +70,11 @@ Google releases an Android [demo](https://github.com/tensorflow/examples/tree/ma
 
 **Update**: The great work [TinyNeuralNetwork](https://github.com/alibaba/TinyNeuralNetwork) solves all problems! Thanks for their help!!! Now the PyTorch model can be directly converted into TFLite model. Check [export.py](export.py).
 
+To deploy the model, what you need to do:
+1. Use [export.py](export.py) to convert the PyTorch model to TFlite model. The model will be stored in the directory `_models`.
+2. Move the models to the directory `android/app/src/main/assets`.
+3. Compile the android project, then you can see how the MoveNet performs on your phone.
+
 
 ### 3D Pose Estimation
 This repo also exploits 2d-to-3d pose estimation, of which the inputs are obtained from MoveNet.

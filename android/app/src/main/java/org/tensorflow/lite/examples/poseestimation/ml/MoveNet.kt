@@ -189,7 +189,8 @@ class MoveNet(private val interpreter: Interpreter, private var gpuDelegate: Gpu
             add(ResizeWithCropOrPadOp(size, size))
             add(ResizeOp(inputWidth, inputHeight, ResizeOp.ResizeMethod.BILINEAR))
         }.build()
-        val tensorImage = TensorImage(DataType.UINT8)
+//        val tensorImage = TensorImage(DataType.UINT8)
+        val tensorImage = TensorImage(DataType.FLOAT32)
         tensorImage.load(bitmap)
         return imageProcessor.process(tensorImage)
     }

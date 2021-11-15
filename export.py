@@ -37,13 +37,18 @@ def main():
 
 
     ####### step 1: Pytorch to ONNX #######
-    print('==> Start to convert the model from Pytorch to ONNX...')
+    print('==> Start to convert the model from Pytorch to TFLite using TinyNeuralNetwork...')
     # prepare the dummy input
     sample_input = torch.rand((1, args.size, args.size, 3))
 
     converter = TFLiteConverter(model, sample_input, tflite_model_path, input_transpose=False)
     converter.convert()
     exit()
+
+    
+    '''
+    The following code is deprecated due to the awesome TinyNeuralNetwork tool.
+    '''
 
     # export to ONNX format
     torch.onnx.export(

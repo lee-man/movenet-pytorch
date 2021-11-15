@@ -33,7 +33,7 @@ android {
 }
 
 // Download tflite model
-apply from:"download.gradle"
+//apply from:"download.gradle"
 
 dependencies {
 
